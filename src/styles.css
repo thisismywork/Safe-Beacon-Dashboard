@@ -1,0 +1,445 @@
+/* ==========================================================================
+   SAFE BEACON — Design tokens
+   Palette: near-black telemetry surface, signal-blue for "live", alert-red
+   for SOS states, amber for battery/caution. Mono type for all data values
+   (coordinates, timestamps, device IDs) to read like receiver output;
+   Manrope for UI chrome and labels.
+   ========================================================================== */
+
+:root {
+  --bg-deep: #0a0d12;
+  --bg-panel: #12161d;
+  --bg-panel-raised: #171c25;
+  --border-hairline: #232a35;
+  --border-hairline-strong: #2e3644;
+
+  --text-primary: #e9edf2;
+  --text-muted: #7c8797;
+  --text-faint: #4d5763;
+
+  --signal-blue: #4fa8ff;
+  --signal-blue-dim: rgba(79, 168, 255, 0.14);
+
+  --alert-red: #ff5a4e;
+  --alert-red-dim: rgba(255, 90, 78, 0.14);
+
+  --standby-green: #3ddc84;
+  --standby-green-dim: rgba(61, 220, 132, 0.14);
+
+  --amber: #f5a742;
+  --amber-dim: rgba(245, 167, 66, 0.14);
+
+  --font-display: 'Manrope', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   Shell + layout
+   ========================================================================== */
+
+.app-shell {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  min-height: 0;
+}
+
+.main-panel {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  min-height: 0;
+  border-left: 1px solid var(--border-hairline);
+}
+
+@media (max-width: 860px) {
+  .app-main {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  .main-panel {
+    border-left: none;
+    border-top: 1px solid var(--border-hairline);
+  }
+}
+
+/* ==========================================================================
+   Status bar (signature: live pulse indicator)
+   ========================================================================== */
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border-hairline);
+  background: var(--bg-panel);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-mark {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pulse-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  z-index: 1;
+}
+.pulse-dot--connecting { background: var(--text-faint); }
+.pulse-dot--live { background: var(--signal-blue); }
+.pulse-dot--error { background: var(--alert-red); }
+
+.pulse-ring {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  opacity: 0;
+}
+.pulse-ring--live {
+  border: 1.5px solid var(--signal-blue);
+  animation: pulse-out 2s ease-out infinite;
+}
+.pulse-ring--error {
+  border: 1.5px solid var(--alert-red);
+  animation: pulse-out 1s ease-out infinite;
+}
+
+@keyframes pulse-out {
+  0% { transform: scale(0.5); opacity: 0.7; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-ring--live,
+  .pulse-ring--error {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.brand-name {
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+}
+
+.brand-tagline {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.status-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.status-chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 10px;
+  border: 1px solid var(--border-hairline-strong);
+  border-radius: 999px;
+  letter-spacing: 0.05em;
+}
+
+.status-chip__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.status-chip__dot--connecting { background: var(--text-faint); }
+.status-chip__dot--live { background: var(--standby-green); }
+.status-chip__dot--error { background: var(--alert-red); }
+
+.status-meta__count-num {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .status-meta__clock { display: none; }
+}
+
+/* ==========================================================================
+   Alert feed (left column)
+   ========================================================================== */
+
+.alert-feed {
+  border-right: 1px solid var(--border-hairline);
+  background: var(--bg-panel);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.alert-feed__header {
+  padding: 16px 18px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.alert-feed__list {
+  list-style: none;
+  margin: 0;
+  padding: 10px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.alert-feed__empty {
+  padding: 24px 18px;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.alert-feed__empty-sub {
+  color: var(--text-faint);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.alert-feed__empty-sub code {
+  font-family: var(--font-mono);
+  background: var(--bg-panel-raised);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.alert-feed__empty--error {
+  color: var(--alert-red);
+}
+
+.alert-card {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.alert-card:hover {
+  background: var(--bg-panel-raised);
+}
+
+.alert-card--active {
+  background: var(--signal-blue-dim);
+  border-color: var(--signal-blue);
+}
+
+.alert-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.alert-card__badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--alert-red-dim);
+  color: var(--alert-red);
+}
+
+.alert-card__latest {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--standby-green);
+}
+
+.alert-card__device {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.alert-card__coords {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.alert-card__time {
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+/* ==========================================================================
+   Map panel
+   ========================================================================== */
+
+.map-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.map-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.map-panel__hint {
+  text-transform: none;
+  font-weight: 400;
+  letter-spacing: normal;
+  color: var(--text-faint);
+  font-size: 11px;
+}
+
+.map-panel__frame {
+  flex: 1;
+  min-height: 260px;
+}
+
+/* Leaflet dark-mode tint so the map matches the telemetry surface */
+.map-panel__frame .leaflet-container {
+  background: var(--bg-deep);
+  filter: brightness(0.9) contrast(1.05) saturate(0.85);
+}
+
+/* ==========================================================================
+   Alert detail panel
+   ========================================================================== */
+
+.alert-detail {
+  padding: 18px 22px 22px;
+  background: var(--bg-panel);
+}
+
+.alert-detail--empty {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.alert-detail__row {
+  display: flex;
+  gap: 32px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.alert-detail__row:last-of-type {
+  border-bottom: none;
+}
+
+.alert-detail__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.alert-detail__field--wide {
+  flex: 1;
+}
+
+.alert-detail__label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.alert-detail__value {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.alert-detail__value--mono {
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+.alert-detail__value--large {
+  font-size: 18px;
+  color: var(--signal-blue);
+}
+
+.alert-detail__notice {
+  margin-top: 14px;
+  font-size: 11px;
+  color: var(--amber);
+  background: var(--amber-dim);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  display: inline-block;
+}
