@@ -1,15 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { collection, onSnapshot, orderBy, query, limit } from 'firebase/firestore';
 import { db } from './firebase';
+import { registerServiceWorker } from './push';
 import AlertFeed from './components/AlertFeed.jsx';
 import MapPanel from './components/MapPanel.jsx';
 import AlertDetail from './components/AlertDetail.jsx';
 import StatusBar from './components/StatusBar.jsx';
+import EnableAlerts from './components/EnableAlerts.jsx';
 
 export default function App() {
   const [alerts, setAlerts] = useState([]);
-  const [selectedId, setSelectedId] = useState(null);
+  // CHANGE 1: if the app was opened from a notification (/?alert=ID), start on that alert
+  const [selectedId, setSelectedId] = useState(
+    () => new URLSearchParams(window.location.search).get('alert')
+  );
   const [connectionState, setConnectionState] = useState('connecting'); // connecting | live | error
+
+  // CHANGE 2: register the service worker as soon as the app loads
+  useEffect(() => {
+    registerServiceWorker().catch((err) => console.error('Service worker error:', err));
+  }, []);
 
   useEffect(() => {
     const q = query(collection(db, 'alerts'), orderBy('timestamp', 'desc'), limit(25));
@@ -51,6 +61,9 @@ export default function App() {
           <AlertDetail alert={selectedAlert} />
         </section>
       </main>
+
+      {/* CHANGE 3: install + enable-notifications banner */}
+      <EnableAlerts />
     </div>
   );
 }
