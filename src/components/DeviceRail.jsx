@@ -1,6 +1,6 @@
 import React from 'react';
 import Icon from './Icon.jsx';
-import { clockTime, colorFor, initials, isActive, mapsUrl, statusLabel, timeAgo, useNow, hasCoords } from '../utils';
+import { clockTime, colorFor, initials, isActive, mapsUrl, placeText, statusLabel, timeAgo, useNow, hasCoords } from '../utils';
 
 export default function DeviceRail({ alert, name, contacts, logItems, nameOf, onStatus, onAddContact }) {
   const now = useNow(1000);
@@ -16,6 +16,7 @@ export default function DeviceRail({ alert, name, contacts, logItems, nameOf, on
               <span>Battery</span>
               <strong className="amber">{alert.batteryLevel != null ? `${alert.batteryLevel}%` : '—'}</strong>
             </div>
+            <div className="kv"><span>Location</span><strong>{placeText(alert)}</strong></div>
             <div className="kv"><span>Device ID</span><strong className="mono">{alert.deviceId}</strong></div>
             <div className="kv"><span>Last alert</span><strong>{timeAgo(alert.timestamp, now)}</strong></div>
             <div className="kv"><span>Status</span><strong>{statusLabel(alert.status)}</strong></div>

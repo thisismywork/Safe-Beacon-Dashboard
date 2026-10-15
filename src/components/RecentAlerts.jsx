@@ -1,5 +1,5 @@
 import React from 'react';
-import { coords, isActive, statusLabel, timeAgo, useNow } from '../utils';
+import { isActive, placeText, statusLabel, timeAgo, useNow } from '../utils';
 
 export default function RecentAlerts({
   items, selectedId, onSelect, nameOf, title = 'Recent alerts',
@@ -31,7 +31,7 @@ export default function RecentAlerts({
           <span className="row-dot" />
           <div className="row-main">
             <div className="row-name">{nameOf(a.deviceId)}</div>
-            <div className="row-sub mono">{coords(a)}</div>
+            <div className="row-sub">{placeText(a)}</div>
           </div>
           <div className="row-side">
             <span className={`tag ${a.status}`}>{statusLabel(a.status)}</span>
