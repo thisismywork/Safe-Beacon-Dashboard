@@ -111,17 +111,24 @@ h3 { margin: 0; }
 
 /* ---------- live banner ---------- */
 .live-banner {
-  display: flex; align-items: center; gap: 16px; padding: 16px 18px; cursor: pointer;
+  display: flex; flex-direction: column; gap: 14px; padding: 16px 18px;
   border-radius: var(--radius); border: 1px solid rgba(239, 51, 34, 0.45);
   background: linear-gradient(90deg, rgba(239, 51, 34, 0.16), rgba(239, 51, 34, 0.04));
 }
+.live-top { display: flex; align-items: center; gap: 16px; }
 .live-icon { width: 46px; height: 46px; border-radius: 12px; background: var(--red); display: grid; place-items: center; flex-shrink: 0; color: #fff; }
 .live-text { flex: 1; min-width: 0; }
-.live-title { color: #ff5a4a; font-weight: 800; font-size: 17px; }
+.live-title { color: #ff5a4a; font-weight: 800; font-size: 18px; }
 .live-sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
 .live-clock { text-align: right; }
 .live-clock .mono { font-size: 17px; font-weight: 600; display: block; }
 .live-clock small { color: var(--muted); font-size: 11px; }
+.live-place { padding: 12px 14px; border-radius: 12px; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(239, 51, 34, 0.25); }
+.place-label { font-size: 10.5px; letter-spacing: 0.14em; color: var(--muted); font-weight: 800; }
+.place-name { font-size: 21px; font-weight: 800; margin: 5px 0 3px; line-height: 1.25; }
+.place-meta { font-size: 12px; color: var(--muted); }
+.live-actions { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 10px; }
+.btn.big { padding: 14px 10px; font-size: 14.5px; }
 
 .all-clear { padding: 16px 18px; border-radius: var(--radius); border: 1px solid rgba(34, 197, 94, 0.3); background: rgba(34, 197, 94, 0.07); color: #86efac; font-weight: 600; }
 
@@ -256,9 +263,12 @@ tbody tr:hover { background: var(--panel-2); }
   .nav-item.active { box-shadow: none; }
   .content { padding: 14px; }
   .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .live-banner { flex-wrap: wrap; }
+  .live-top { flex-wrap: wrap; }
   .live-text { flex-basis: calc(100% - 70px); }
   .live-clock { text-align: left; }
+  .live-actions { grid-template-columns: 1fr 1fr; }
+  .live-actions .btn-red:first-child { grid-column: 1 / -1; }
+  .place-name { font-size: 19px; }
   .map-box.tall { height: 60vh; }
 }
 @media (max-width: 480px) {

@@ -63,6 +63,8 @@ export default function App() {
   const latestActive = active[0] || null;
   const selected = alerts.find((a) => a.id === selectedId) || latestActive || alerts[0] || null;
   const todayCount = alerts.filter((a) => isToday(a.timestamp)).length;
+  // If a contact opened a notification, show that alert first; otherwise the newest active one
+  const bannerAlert = selected && isActive(selected) ? selected : latestActive;
 
   const railContacts = selected ? contacts.filter((c) => c.deviceId === selected.deviceId) : [];
   const sidebarDeviceId = selected?.deviceId || devices[0]?.id || null;
@@ -113,12 +115,11 @@ export default function App() {
           {view === 'dashboard' && (
             <div className="dash-grid">
               <div className="dash-main">
-                {latestActive ? (
+                {bannerAlert ? (
                   <LiveAlertBanner
-                    alert={latestActive}
-                    name={nameOf(latestActive.deviceId)}
-                    onSelect={() => setSelectedId(latestActive.id)}
-                    onAcknowledge={() => setStatus(latestActive.id, 'ACKNOWLEDGED')}
+                    alert={bannerAlert}
+                    name={nameOf(bannerAlert.deviceId)}
+                    onAcknowledge={() => setStatus(bannerAlert.id, 'ACKNOWLEDGED')}
                   />
                 ) : (
                   <div className="all-clear">✅ No active alerts. All devices are quiet.</div>

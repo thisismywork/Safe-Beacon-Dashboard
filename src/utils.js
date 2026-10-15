@@ -45,7 +45,14 @@ export const hasCoords = (a) =>
 export const coords = (a) =>
   hasCoords(a) ? `${Number(a.latitude).toFixed(4)}, ${Number(a.longitude).toFixed(4)}` : 'No location';
 
-export const mapsUrl = (a) => `https://www.google.com/maps?q=${a.latitude},${a.longitude}`;
+export const mapsUrl = (a) =>
+  `https://www.google.com/maps/search/?api=1&query=${a.latitude},${a.longitude}`;
+
+export const directionsUrl = (a) =>
+  `https://www.google.com/maps/dir/?api=1&destination=${a.latitude},${a.longitude}`;
+
+// The most human-friendly description of where the wearer is
+export const placeText = (a) => a.address || coords(a);
 
 export const clockTime = (iso) =>
   iso ? new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '—';
